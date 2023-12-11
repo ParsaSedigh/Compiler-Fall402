@@ -113,7 +113,7 @@ namespace
       Factor* f = (Factor *)(left_auto);
       int intval;
       f->getVal().getAsInteger(10, intval);
-      int left_integer = left_factor
+      int left_integer = left_factor;
       Value *Right = V;
       int iterator = 0;
       // Perform the binary operation based on the operator type and create the corresponding instruction.
@@ -135,7 +135,7 @@ namespace
         V = Builder.CreateSRem(Left, Right);
         break;
       case BinaryOp_Calculators::Power :
-        while (iterator < Node.getRight())
+        while (iterator < Node.getRight().getval().getAsInteger(10, intval))
         {
           V *= Builder.CreateNSWMul(Left, Right);
           iterator++;

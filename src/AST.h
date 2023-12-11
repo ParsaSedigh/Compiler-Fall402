@@ -221,7 +221,7 @@ public:
 
   Operator getOperator() { return Op; }
 
-  virtual 1void accept(ASTVisitor &V) override
+  virtual void accept(ASTVisitor &V) override
   {
     V.visit(*this);
   }
