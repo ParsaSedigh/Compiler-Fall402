@@ -381,12 +381,12 @@ Expr *Parser::parseCondition()
         if (!Tok.is(Token::semicolon))
         {
             error();
-            goto _error2;
+            goto _error;
         }
         if (a)
             exprs.push_back(a);
         else
-            goto _error2;
+            goto _error;
 
         advance();
     }
@@ -487,7 +487,7 @@ Expr *Parser::parseLoop()
 
     advance();
 
-    E = parseTerm();
+    a = parseTerm();
 
     if (expect(Token::KW_colon))
         goto _error;
