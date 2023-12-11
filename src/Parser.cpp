@@ -21,12 +21,12 @@ AST *Parser::parseGoal()
             if (!Tok.is(Token::semicolon))
             {
                 error();
-                goto _error2;
+                goto _error;
             }
             if (a)
                 exprs.push_back(a);
             else
-                goto _error2;
+                goto _error;
             break;
         case Token::ident:
             a = parseAssign();
@@ -34,12 +34,12 @@ AST *Parser::parseGoal()
             if (!Tok.is(Token::semicolon))
             {
                 error();
-                goto _error2;
+                goto _error;
             }
             if (a)
                 exprs.push_back(a);
             else
-                goto _error2;
+                goto _error;
             break;
         case Token::KW_if:
             a = parseCondition();
@@ -47,7 +47,7 @@ AST *Parser::parseGoal()
             if (a)
                 exprs.push_back(a);
             else
-                goto _error2;
+                goto _error;
             break;
         case Token::KW_loop : 
 
@@ -56,22 +56,22 @@ AST *Parser::parseGoal()
             if (!Tok.is(Token::KW_end))
             {
                 error();
-                goto _error2;
+                goto _error;
             }
             if (a)
                 exprs.push_back(a);
             else
-                goto _error2;
+                goto _error;
             break;
 
         default:
-            goto _error2;
+            goto _error;
             break;
         }
         advance(); // TODO: watch this part
     }
     return new Goal(exprs);
-_error2:
+_error:
     while (Tok.getKind() != Token::eoi)
         advance();
     return nullptr;
@@ -422,12 +422,12 @@ Expr *Parser::parseCondition()
             if (!Tok.is(Token::semicolon))
             {
                 error();
-                goto _error2;
+                goto _error;
             }
             if (a)
                 exprs.push_back(a);
             else
-                goto _error2;
+                goto _error;
 
             advance();
         }
