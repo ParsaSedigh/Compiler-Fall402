@@ -109,38 +109,48 @@ namespace
       // Visit the right-hand side of the binary operation and get its value.
       Node.getRight()->accept(*this);
 
-      auto left_auto = Node.getRight();
-      Factor* f = (Factor *)(left_auto);
+      Factor *f = (Factor *)(Node.getRight());
+
       int intval;
-      f->getVal().getAsInteger(10, intval);
-      int left_integer = left_factor;
       Value *Right = V;
-      int iterator = 0;
+      int iterator = 1;
       // Perform the binary operation based on the operator type and create the corresponding instruction.
       switch (Node.getOperator())
       {
-      case BinaryOp_Calculators::Plus :
+      case BinaryOp_Calculators::Plus:
         V = Builder.CreateNSWAdd(Left, Right);
         break;
-      case BinaryOp_Calculators::Minus :
+      case BinaryOp_Calculators::Minus:
         V = Builder.CreateNSWSub(Left, Right);
         break;
-      case BinaryOp_Calculators::Mul :
+      case BinaryOp_Calculators::Mul:
         V = Builder.CreateNSWMul(Left, Right);
         break;
-      case BinaryOp_Calculators::Div :
+      case BinaryOp_Calculators::Div:
         V = Builder.CreateSDiv(Left, Right);
         break;
-      case BinaryOp_Calculators::Percent :
+      case BinaryOp_Calculators::Percent:
         V = Builder.CreateSRem(Left, Right);
         break;
-      case BinaryOp_Calculators::Power :
-        while (iterator < Node.getRight().getval().getAsInteger(10, intval))
+      case BinaryOp_Calculators::Power:
+      {
+        if (f && f->getKind() == Factor::Number)
         {
-          V *= Builder.CreateNSWMul(Left, Right);
-          iterator++;
+          int right_integer = f->getVal().getAsInteger(10, intval);
+          if (right_integer == 0)
+            V = ConstantInt::get(Int32Ty, 1, true);
+          else
+          {
+
+            while (iterator < right_integer)
+            {
+              V = Builder.CreateNSWMul(V, Left);
+              iterator++;
+            }
+          }
         }
-        break;
+      }
+      break;
       }
     };
 
@@ -179,16 +189,16 @@ namespace
       // Perform the binary operation based on the operator type and create the corresponding instruction.
       switch (Node.getOperator())
       {
-      case BinaryOp_Attribution::Plus_equal :
+      case BinaryOp_Attribution::Plus_equal:
         V = Builder.CreateNSWAdd(Left, Right);
         break;
-      case BinaryOp_Attribution::Minus_equal :
+      case BinaryOp_Attribution::Minus_equal:
         V = Builder.CreateOr(Left, Right);
         break;
-      case BinaryOp_Attribution::Slash_equal :
+      case BinaryOp_Attribution::Slash_equal:
         V = Builder.CreateOr(Left, Right);
         break;
-      case BinaryOp_Attribution::Star_equal :
+      case BinaryOp_Attribution::Star_equal:
         V = Builder.CreateOr(Left, Right);
         break;
       }
