@@ -70,7 +70,7 @@ AST *Parser::parseGoal()
         }
         advance(); // TODO: watch this part
     }
-    return new Goal(exprs);
+    return new GSM(exprs);
 _error:
     while (Tok.getKind() != Token::eoi)
         advance();

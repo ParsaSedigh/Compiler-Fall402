@@ -53,7 +53,7 @@ namespace
     }
 
     // Visit function for the Goal node in the AST.
-    virtual void visit(Goal &Node) override
+    virtual void visit(GSM &Node) override
     {
       // Iterate over the children of the Goal node and visit each child.
       for (auto I = Node.begin(), E = Node.end(); I != E; ++I)

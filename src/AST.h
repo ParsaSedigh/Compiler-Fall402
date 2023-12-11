@@ -7,7 +7,7 @@
 // Forward declarations of classes used in the AST
 class AST;
 class Expr;
-class Goal;
+class GSM;
 class Factor;
 class BinaryOp_Calculators;
 class BinaryOp_Relational;
@@ -25,7 +25,7 @@ public:
   // Virtual visit functions for each AST node type
   virtual void visit(AST &) {}               // Visit the base AST node
   virtual void visit(Expr &) {}              // Visit the expression node
-  virtual void visit(Goal &) = 0;             // Visit the group of expressions node
+  virtual void visit(GSM &) = 0;             // Visit the group of expressions node
   virtual void visit(Factor &) = 0;                      // Visit the factor node
   virtual void visit(BinaryOp_Calculators &) = 0;        // Visit the binary operation node
   virtual void visit(BinaryOp_Relational &) = 0;
@@ -51,7 +51,7 @@ public:
 };
 
 // Goal class represents a group of expressions in the AST
-class Goal : public Expr
+class GSM : public Expr
 {
   using ExprVector = llvm::SmallVector<Expr *>;
 
@@ -59,7 +59,7 @@ private:
   ExprVector exprs;                          // Stores the list of expressions
 
 public:
-  Goal(llvm::SmallVector<Expr *> exprs) : exprs(exprs) {}
+  GSM(llvm::SmallVector<Expr *> exprs) : exprs(exprs) {}
 
   llvm::SmallVector<Expr *> getExprs() { return exprs; }
 
