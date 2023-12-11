@@ -137,6 +137,7 @@ Expr *Parser::parseAssign()
 Expr *Parser::parseExpr()
 {
     Expr *Left = parseTerm();
+    operator Op;
     while (Tok.isOneOf(Token::plus_equal, Token::minus_equal, Token::star_equal, Token::slash_equal))
     {
 
@@ -160,7 +161,7 @@ Expr *Parser::parseExpr()
         }
         advance();
         Expr *Right = parseTerm();
-        Left = new BinaryOp(Op, Left, Right);
+        Left = new BinaryOp_Attribution(Op, Left, Right);
     }
     return Left;
 }
@@ -168,6 +169,7 @@ Expr *Parser::parseExpr()
 Expr *Parser::parseTerm()
 {
     Expr *Left = parseFactor();
+    operator Op;
     while (Tok.isOneOf(Token::KW_or))
     {
         BinaryOp::Operator Op;
@@ -185,6 +187,7 @@ Expr *Parser::parseTerm()
 Expr *Parser::parseFactor()
 {
     Expr *Left = parseFactor_eq_neq();
+    operator Op;
     while (Tok.isOneOf(Token::KW_and))
     {
         BinaryOp::Operator Op;
@@ -202,7 +205,7 @@ Expr *Parser::parseFactor()
 Expr *Parser::parseFactor_eq_neq()
 {
     Expr *Left = parseFactor_GE_LE();
-
+    operator Op;
     if (Tok.is(Token::equality) || Tok.is(Token::not_equal))
     {
         BinaryOp::Operator Op;
@@ -222,7 +225,7 @@ Expr *Parser::parseFactor_eq_neq()
 Expr *Parser::parseFactor_GE_LE()
 {
     Expr *Left = parseFactor_G_L();
-
+    operator Op;
     if (Tok.is(Token::greater_than_or_equal) || Tok.is(Token::less_than_or_equal))
     {
         BinaryOp::Operator Op;
@@ -242,6 +245,7 @@ Expr *Parser::parseFactor_GE_LE()
 Expr *Parser::parseFactor_G_L()
 {
     Expr *Left = parseFactor_plus_minus();
+    operator Op;
     if (Tok.isOneOf(Token::greater_than || Token::less_than))
     {
         BinaryOp::Operator Op;
@@ -260,6 +264,7 @@ Expr *Parser::parseFactor_G_L()
 Expr *Parser::parseFactor_plus_minus()
 {
     Expr *Left = parseFactor_mul_div_perc();
+    operator Op;
     while (Tok.isOneOf(Token::plus || Token::minus))
     {
         BinaryOp::Operator Op;
@@ -279,6 +284,7 @@ Expr *Parser::parseFactor_plus_minus()
 Expr *Parser::parseFactor_mul_div_perc()
 {
     Expr *Left = parseFactor_power();
+    operator Op;
     while (Tok.isOneOf(Token::star || Token::slash || Token::percent))
     {
         BinaryOp::Operator Op;
@@ -300,6 +306,7 @@ Expr *Parser::parseFactor_mul_div_perc()
 Expr *Parser::parseFactor_power()
 {
     Expr *Left = parseFactor_terminals();
+    operator Op;
     while (Tok.isOneOf(Token::star || Token::slash || Token::percent))
     {
         BinaryOp::Operator Op;
