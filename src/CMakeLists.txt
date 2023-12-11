@@ -1,5 +1,5 @@
 add_executable (gsm
-  Goal.cpp
+  gsm.cpp
   CodeGen.cpp
   Lexer.cpp
   Parser.cpp
