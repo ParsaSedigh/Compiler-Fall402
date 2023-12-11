@@ -170,9 +170,9 @@ Expr *Parser::parseTerm()
 {
     Expr *Left = parseFactor();
     BinaryOp_Logical::Operator Op;
-    while (Tok.isOneOf(Token::KW_or))
+    while (Tok.is(Token::KW_or))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::KW_or))
             Op = BinaryOp_Logical::KW_OR;
         else
@@ -188,9 +188,9 @@ Expr *Parser::parseFactor()
 {
     Expr *Left = parseFactor_eq_neq();
     BinaryOp_Logical::Operator Op;
-    while (Tok.isOneOf(Token::KW_and))
+    while (Tok.is(Token::KW_and))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::KW_and))
             Op = BinaryOp_Logical::KW_AND;
         else
@@ -208,7 +208,7 @@ Expr *Parser::parseFactor_eq_neq()
     BinaryOp_Relational::Operator Op;
     if (Tok.is(Token::equality) || Tok.is(Token::not_equal))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::equality))
             Op = BinaryOp_Relational::Equality;
         else if (Tok.is(Token::not_equal))
@@ -228,7 +228,7 @@ Expr *Parser::parseFactor_GE_LE()
     BinaryOp_Relational::Operator Op;
     if (Tok.is(Token::greater_than_or_equal) || Tok.is(Token::less_than_or_equal))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::greater_than_or_equal))
             Op = BinaryOp_Relational::Greater_than_or_equal;
         else if (Tok.is(Token::less_than_or_equal))
@@ -246,9 +246,9 @@ Expr *Parser::parseFactor_G_L()
 {
     Expr *Left = parseFactor_plus_minus();
     BinaryOp_Relational::Operator Op;
-    if (Tok.isOneOf(Token::greater_than || Token::less_than))
+    if (Tok.isOneOf(Token::greater_than, Token::less_than))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::greater_than))
             Op = BinaryOp_Relational::Greater_than;
         else if (Tok.is(Token::less_than))
@@ -265,9 +265,9 @@ Expr *Parser::parseFactor_plus_minus()
 {
     Expr *Left = parseFactor_mul_div_perc();
     BinaryOp_Calculators::Operator Op;
-    while (Tok.isOneOf(Token::plus || Token::minus))
+    while (Tok.isOneOf(Token::plus, Token::minus))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::plus))
             Op = BinaryOp_Calculators::Plus;
         else if (Tok.is(Token::minus))
@@ -285,9 +285,9 @@ Expr *Parser::parseFactor_mul_div_perc()
 {
     Expr *Left = parseFactor_power();
     BinaryOp_Calculators::Operator Op;
-    while (Tok.isOneOf(Token::star || Token::slash || Token::percent))
+    while (Tok.isOneOf(Token::star, Token::slash, Token::percent))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::star))
             Op = BinaryOp_Calculators::Mul;
         else if (Tok.is(Token::slash))
@@ -307,9 +307,9 @@ Expr *Parser::parseFactor_power()
 {
     Expr *Left = parseFactor_terminals();
     BinaryOp_Calculators::Operator Op;
-    while (Tok.isOneOf(Token::star || Token::slash || Token::percent))
+    while (Tok.isOneOf(Token::star, Token::slash, Token::percent))
     {
-        BinaryOp::Operator Op;
+
         if (Tok.is(Token::star))
             Op = BinaryOp_Calculators::Mul;
         else if (Tok.is(Token::slash))
@@ -362,7 +362,7 @@ Expr *Parser::parseCondition()
 
     advance();
 
-    E = parseTerm();
+    a = parseTerm();
 
     if (expect(Token::KW_colon))
         goto _error;
@@ -374,7 +374,7 @@ Expr *Parser::parseCondition()
 
     advance();
 
-    while (!Tok.getKind(Token::KW_end))
+    while (!Tok.is(Token::KW_end))
     {
 
         a = parseAssign();
@@ -396,14 +396,14 @@ Expr *Parser::parseCondition()
 
     advance();
 
-    while (Tok.getKind(Token::KW_elif))
+    while (Tok.is(Token::KW_elif))
     {
         if (expect(Token::KW_elif))
             goto _error;
 
         advance();
 
-        E = parseTerm();
+        a = parseTerm();
 
         if (expect(Token::KW_colon))
             goto _error;
@@ -415,7 +415,7 @@ Expr *Parser::parseCondition()
 
         advance();
 
-        while (!Tok.getKind(Token::KW_end))
+        while (!Tok.is(Token::KW_end))
         {
 
             a = parseAssign();
@@ -453,25 +453,29 @@ Expr *Parser::parseCondition()
 
         advance();
 
-        while (!Tok.getKind(Token::KW_end))
+        while (!Tok.is(Token::KW_end))
         {
 
             a = parseAssign();
             if (!Tok.is(Token::semicolon))
             {
                 error();
-                goto _error2;
+                goto _error;
             }
             if (a)
                 exprs.push_back(a);
             else
-                goto _error2;
+                goto _error;
 
             advance();
         }
     }
 
     return new Condition(exprs);
+_error: // TODO: Check this later in case of error :)
+    while (Tok.getKind() != Token::eoi)
+        advance();
+    return nullptr;
 }
 
 Expr *Parser::parseLoop()
@@ -495,7 +499,7 @@ Expr *Parser::parseLoop()
 
     advance();
 
-    while (!Tok.getKind(Token::KW_end))
+    while (!Tok.is(Token::KW_end))
     {
 
         a = parseAssign();
@@ -503,16 +507,20 @@ Expr *Parser::parseLoop()
         if (!Tok.is(Token::semicolon))
         {
             error();
-            goto _error2;
+            goto _error;
         }
         if (a)
             exprs.push_back(a);
         else
-            goto _error2;
+            goto _error;
 
         advance();
     }
 
     return new Loop(exprs);
+_error: // TODO: Check this later in case of error :)
+    while (Tok.getKind() != Token::eoi)
+        advance();
+    return nullptr;
 
 }
