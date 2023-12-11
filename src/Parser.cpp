@@ -49,7 +49,7 @@ AST *Parser::parseGoal()
             else
                 goto _error;
             break;
-        case Token::KW_loop : 
+        case Token::KW_loop:
 
             a = parseLoop();
 
@@ -213,12 +213,11 @@ Expr *Parser::parseFactor_eq_neq()
             Op = BinaryOp_Relational::Equality;
         else if (Tok.is(Token::not_equal))
             Op = BinaryOp_Relational::Not_equal;
+
+        advance();
+        Expr *Right = parseFactor_GE_LE();
+        Left = new BinaryOp_Relational(Op, Left, Right);
     }
-
-    advance();
-    Expr *Right = parseFactor_GE_LE();
-    Left = new BinaryOp_Relational(Op, Left, Right);
-
     return Left;
 }
 
@@ -233,11 +232,11 @@ Expr *Parser::parseFactor_GE_LE()
             Op = BinaryOp_Relational::Greater_than_or_equal;
         else if (Tok.is(Token::less_than_or_equal))
             Op = BinaryOp_Relational::Less_than_or_equal;
-    }
 
-    advance();
-    Expr *Right = parseFactor_G_L();
-    Left = new BinaryOp_Relational(Op, Left, Right);
+        advance();
+        Expr *Right = parseFactor_G_L();
+        Left = new BinaryOp_Relational(Op, Left, Right);
+    }
 
     return Left;
 }
@@ -253,11 +252,11 @@ Expr *Parser::parseFactor_G_L()
             Op = BinaryOp_Relational::Greater_than;
         else if (Tok.is(Token::less_than))
             Op = BinaryOp_Relational::Less_than;
-    }
 
     advance();
     Expr *Right = parseFactor_plus_minus();
     Left = new BinaryOp_Relational(Op, Left, Right);
+    }
     return Left;
 }
 
@@ -522,5 +521,4 @@ _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
     return nullptr;
-
 }
