@@ -22,8 +22,8 @@ public:
 
   bool hasError() { return HasError; } // Function to check if an error occurred
 
-  // Visit function for GSM nodes
-  virtual void visit(GSM &Node) override { 
+  // Visit function for Goal nodes
+  virtual void visit(Goal &Node) override { 
     for (auto I = Node.begin(), E = Node.end(); I != E; ++I)
     {
       (*I)->accept(*this); // Visit each child node
@@ -40,7 +40,7 @@ public:
   };
 
   // Visit function for BinaryOp nodes
-  virtual void visit(BinaryOp &Node) override {
+  virtual void visit(BinaryOp_Calculators &Node) override {
     if (Node.getLeft())
       Node.getLeft()->accept(*this);
     else
@@ -52,7 +52,7 @@ public:
     else
       HasError = true;
 
-    if (Node.getOperator() == BinaryOp::Operator::Div && right) {
+    if (Node.getOperator() == BinaryOp_Calculators::Operator::Div && right) {
       Factor * f = (Factor *)right;
 
       if (right && f->getKind() == Factor::ValueKind::Number) {
