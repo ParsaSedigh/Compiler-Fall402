@@ -96,6 +96,18 @@ public:
     if (Node.getExpr())
       Node.getExpr()->accept(*this); // If the Declaration node has an expression, recursively visit the expression node
   };
+
+  virtual void visit(BinaryOp_Relational &Node) override {};
+
+  virtual void visit(BinaryOp_Logical &Node) override {};
+
+  virtual void visit(BinaryOp_Attribution &Node) override {};
+
+  virtual void visit(Loop &Node) override {};
+  
+  virtual void visit(Condition &Node) override {};
+
+
 };
 }
 
