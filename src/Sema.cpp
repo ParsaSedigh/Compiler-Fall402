@@ -103,9 +103,9 @@ public:
 
   virtual void visit(BinaryOp_Attribution &Node) override {};
 
-  virtual void visit(Loop &Node) override {};
+  virtual void visit(Loop &Node) {};
   
-  virtual void visit(Condition &Node) override {};
+  virtual void visit(Condition &Node) {};
 
 
 };
