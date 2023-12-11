@@ -79,7 +79,7 @@ void Lexer::next(Token &token)
     }
 
     /*Assignment Operators : possibility of Error*/
-    else if ('=' = *(BufferPtr + 2))
+    else if ('=' == *(BufferPtr + 2))
     {
         
         switch (*BufferPtr)

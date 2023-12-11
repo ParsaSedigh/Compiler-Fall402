@@ -10,13 +10,12 @@ AST *Parser::parse()
 AST *Parser::parseGoal()
 {
     llvm::SmallVector<Expr *> exprs;
+    Expr *a;
     while (!Tok.is(Token::eoi))
     {
         switch (Tok.getKind())
         {
         case Token::KW_int:
-            /*TODO*/
-            Expr *a;
             a = parseDec();
 
             if (!Tok.is(Token::semicolon))
@@ -30,7 +29,6 @@ AST *Parser::parseGoal()
                 goto _error2;
             break;
         case Token::ident:
-            Expr *a;
             a = parseAssign();
 
             if (!Tok.is(Token::semicolon))
@@ -44,7 +42,6 @@ AST *Parser::parseGoal()
                 goto _error2;
             break;
         case Token::KW_if:
-            Expr *a;
             a = parseCondition();
 
             if (a)
@@ -54,7 +51,6 @@ AST *Parser::parseGoal()
             break;
         case Token::KW_loop : 
 
-            Expr *a;
             a = parseLoop();
 
             if (!Tok.is(Token::KW_end))
