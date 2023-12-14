@@ -1,0 +1,3 @@
+/home/mahsein/compiler/Compiler-Fall402/src/build/CMakeFiles/gsm.dir
+/home/mahsein/compiler/Compiler-Fall402/src/build/CMakeFiles/edit_cache.dir
+/home/mahsein/compiler/Compiler-Fall402/src/build/CMakeFiles/rebuild_cache.dir

@@ -29,7 +29,7 @@ namespace
       // Initialize LLVM types and constants.
       VoidTy = Type::getVoidTy(M->getContext());
       Int32Ty = Type::getInt32Ty(M->getContext());
-      Int8PtrTy = Type::getInt8PtrTy(M->getContext());
+      Int8PtrTy = Type::getInt8Ty(M->getContext());
       Int8PtrPtrTy = Int8PtrTy->getPointerTo();
       Int32Zero = ConstantInt::get(Int32Ty, 0, true);
     }
@@ -133,24 +133,34 @@ namespace
         V = Builder.CreateSRem(Left, Right);
         break;
       case BinaryOp_Calculators::Power:
-      {
-        if (f && f->getKind() == Factor::Number)
         {
-          int right_integer = f->getVal().getAsInteger(10, intval);
-          if (right_integer == 0)
-            V = ConstantInt::get(Int32Ty, 1, true);
-          else
-          {
-
-            while (iterator < right_integer)
+            // Check if the right side of the power operation is a number
+            if (f && f->getKind() == Factor::Number)
             {
-              V = Builder.CreateNSWMul(V, Left);
-              iterator++;
+                int right_integer;
+                if (f->getVal().getAsInteger(10, right_integer)) {
+                    // Handle error: unable to convert the exponent to an integer
+                    // Handle the error scenario as needed
+                } else {
+                    // Create an initial value for the result
+                    V = Left;
+
+                    // If the exponent is 0, set the result to 1
+                    if (right_integer == 0) {
+                        V = ConstantInt::get(Int32Ty, 1, true);
+                    } else {
+                        // Initialize the result to 1
+                        V = ConstantInt::get(Int32Ty, 1, true);
+                        
+                        // Multiply 'Left' by itself 'right_integer' times
+                        for (int i = 0; i < right_integer; ++i) {
+                            V = Builder.CreateNSWMul(V, Left);
+                        }
+                    }
+                }
             }
-          }
+            break;
         }
-      }
-      break;
       }
     };
 
@@ -193,13 +203,21 @@ namespace
         V = Builder.CreateNSWAdd(Left, Right);
         break;
       case BinaryOp_Attribution::Minus_equal:
-        V = Builder.CreateOr(Left, Right);
+        V = Builder.CreateNSWSub(Left, Right);
         break;
       case BinaryOp_Attribution::Slash_equal:
-        V = Builder.CreateOr(Left, Right);
-        break;
+        {
+            // Perform division
+            Value *Result = Builder.CreateSDiv(Left, Right);
+
+            // Assign the result back to 'Left'
+            Builder.CreateStore(Result, nameMap[Left->getName()]);
+            V = Result; // Set the current value to the result if needed
+            break;
+        }
+
       case BinaryOp_Attribution::Star_equal:
-        V = Builder.CreateOr(Left, Right);
+        V = Builder.CreateNSWMul(Left, Right);
         break;
       }
     };
