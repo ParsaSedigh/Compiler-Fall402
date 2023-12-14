@@ -319,17 +319,10 @@ Expr *Parser::parseFactor_power()
 {
     Expr *Left = parseFactor_terminals();
     BinaryOp_Calculators::Operator Op;
-    while (Tok.isOneOf(Token::star, Token::slash, Token::percent))
+    while (Tok.is(Token::power))
     {
 
-        if (Tok.is(Token::star))
-            Op = BinaryOp_Calculators::Mul;
-        else if (Tok.is(Token::slash))
-            Op = BinaryOp_Calculators::Div;
-        else if (Tok.is(Token::percent))
-            Op = BinaryOp_Calculators::Percent;
-        else
-            error();
+        Op = BinaryOp_Calculators::Power;
         advance();
         Expr *Right = parseFactor_terminals();
         Left = new BinaryOp_Calculators(Op, Left, Right);
