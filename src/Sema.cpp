@@ -15,6 +15,7 @@ class InputCheck : public ASTVisitor {
                  << (ET == Twice ? "already" : "not")
                  << " declared\n";
     HasError = true; // Set error flag to true
+    exit(0);
   }
 
 public:

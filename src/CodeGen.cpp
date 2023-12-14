@@ -133,25 +133,36 @@ namespace
         V = Builder.CreateSRem(Left, Right);
         break;
       case BinaryOp_Calculators::Power:
-      {
-        if (f && f->getKind() == Factor::Number)
-        {
-          int right_integer = f->getVal().getAsInteger(10, intval);
-          if (right_integer == 0)
-            V = ConstantInt::get(Int32Ty, 1, true);
-          else
-          {
-
-            while (iterator < right_integer)
+{
+            // Check if the right side of the power operation is a number
+            if (f && f->getKind() == Factor::Number)
             {
-              V = Builder.CreateNSWMul(V, Left);
-              iterator++;
+                int right_integer;
+                if (f->getVal().getAsInteger(10, right_integer)) {
+                    // Handle error: unable to convert the exponent to an integer
+                    // Handle the error scenario as needed
+                } else {
+                    // Create an initial value for the result
+                    V = Left;
+
+                    // If the exponent is 0, set the result to 1
+                    if (right_integer == 0) {
+                        V = ConstantInt::get(Int32Ty, 1, true);
+                    } else {
+                        // Initialize the result to 1
+                        V = ConstantInt::get(Int32Ty, 1, true);
+                        
+                        // Multiply 'Left' by itself 'right_integer' times
+                        for (int i = 0; i < right_integer; ++i) {
+                            V = Builder.CreateNSWMul(V, Left);
+                        }
+                    }
+                }
             }
-          }
+            break;
         }
       }
-      break;
-      }
+
     };
 
     virtual void visit(BinaryOp_Logical &Node) override
@@ -181,7 +192,7 @@ namespace
       // Visit the left-hand side of the binary operation and get its value.
       Node.getLeft()->accept(*this);
       Value *Left = V;
-
+      
       // Visit the right-hand side of the binary operation and get its value.
       Node.getRight()->accept(*this);
       Value *Right = V;
@@ -190,20 +201,94 @@ namespace
       switch (Node.getOperator())
       {
       case BinaryOp_Attribution::Plus_equal:
-        V = Builder.CreateNSWAdd(Left, Right);
-        break;
+        {
+           Value *Result = Builder.CreateAdd(Left, Right);
+
+            Builder.CreateStore(Result, Left);
+            V = Result; // Set the current value to the result if needed
+            break;
+        }
       case BinaryOp_Attribution::Minus_equal:
-        V = Builder.CreateOr(Left, Right);
-        break;
+        {
+            Value *Result = Builder.CreateSub(Left, Right);
+
+            Builder.CreateStore(Result, Left);
+            V = Result; // Set the current value to the result if needed
+            break;
+        }
       case BinaryOp_Attribution::Slash_equal:
-        V = Builder.CreateOr(Left, Right);
-        break;
+        {
+            // Perform division
+            Value *Result = Builder.CreateSDiv(Left, Right);
+            // Mahsein, [12/15/2023 12:35 AM]
+            // Assign the result back to 'Left'
+            Builder.CreateStore(Result, Left);
+            V = Result; // Set the current value to the result if needed
+            break;
+        }
+
       case BinaryOp_Attribution::Star_equal:
-        V = Builder.CreateOr(Left, Right);
-        break;
+        {
+            // Perform division
+            Value *Result = Builder.CreateMul(Left, Right);
+
+            // Assign the result back to 'Left'
+            Builder.CreateNSWMul(Result, Left);
+            V = Result; // Set the current value to the result if needed
+            break;
+        }
       }
     };
 
+    // virtual void visit(Condition &Node) override
+    // {
+    //   Node.getLeft()->accept(*this);
+    //   Value* Left = V;
+    //   Node.getRight()->accept(*this);
+    //   Value* Right = V;
+    //   switch (Node.getSign())
+    //   {
+    //   case Condition::Operator::Equal:
+    //     V = Builder.CreateICmpEQ(Left, Right);
+    //     break;
+    //   case Condition::Operator::Less:
+    //     V = Builder.CreateICmpSLT(Left, Right);
+    //     break;
+    //   case Condition::Operator::LessEqual:
+    //     V = Builder.CreateICmpSLE(Left, Right);
+    //     break;
+    //   case Condition::Operator::GreaterEqual:
+    //     V = Builder.CreateICmpSGE(Left, Right);
+    //     break;
+    //   case Condition::Operator::Greater:
+    //     V = Builder.CreateICmpSGT(Left, Right);
+    //     break;
+    //   case Condition::Operator::NotEqual:
+    //     V = Builder.CreateICmpNE(Left, Right);
+    //   }
+    // }
+    // virtual void visit(Loop &Node) override
+    // {
+
+    //   llvm::BasicBlock* loopifbb = llvm::BasicBlock::Create(M->getContext(), "loopc.cond", MainFn);
+    //   llvm::BasicBlock* loopbodybb = llvm::BasicBlock::Create(M->getContext(), "loopc.body", MainFn);
+    //   llvm::BasicBlock* afterloopbb = llvm::BasicBlock::Create(M->getContext(), "after.loopc", MainFn);
+
+    //   Builder.CreateBr(loopifbb);
+    //   Builder.SetInsertPoint(loopifbb);
+    //   Node.getCondition()->accept(*this);
+    //   Value* val=V;
+    //   Builder.CreateCondBr(val, loopbodybb, afterloopbb);
+    //   Builder.SetInsertPoint(loopbodybb);
+    //   llvm::SmallVector<AssignStatement* > assignStatements = Node.getAssignments();
+    //   for (auto I = assignStatements.begin(), E = assignStatements.end(); I != E; ++I)
+    //   {
+    //     (*I)->accept(*this);
+    //   }
+    //   Builder.CreateBr(loopifbb);
+
+    //   Builder.SetInsertPoint(afterloopbb);
+    // }
     virtual void visit(BinaryOp_Relational &Node) override
     {
       // Visit the left-hand side of the binary operation and get its value.

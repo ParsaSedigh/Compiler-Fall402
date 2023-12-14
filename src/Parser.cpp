@@ -74,6 +74,7 @@ AST *Parser::parseGoal()
 _error:
     while (Tok.getKind() != Token::eoi)
         advance();
+        exit(0);
     return nullptr;
 }
 
@@ -81,6 +82,7 @@ Expr *Parser::parseDec()
 {
     Expr *E;
     llvm::SmallVector<llvm::StringRef, 8> Vars;
+    int counter =0;
 
     if (expect(Token::KW_int))
         goto _error;
@@ -90,6 +92,7 @@ Expr *Parser::parseDec()
     if (expect(Token::ident))
         goto _error;
     Vars.push_back(Tok.getText());
+    counter++;
     advance();
 
     while (Tok.is(Token::comma))
@@ -98,6 +101,7 @@ Expr *Parser::parseDec()
         if (expect(Token::ident))
             goto _error;
         Vars.push_back(Tok.getText());
+        counter++;
         advance();
     }
 
@@ -105,11 +109,12 @@ Expr *Parser::parseDec()
     {
         advance();
         E = parseExpr();
-        advance();
-        while (Tok.is(Token::comma))
+        counter--;
+        while (Tok.is(Token::comma) && counter>0)
         {
-            E += parseExpr();
+            counter--;
             advance();
+            E = parseExpr();
         }
         
     }
@@ -121,6 +126,7 @@ Expr *Parser::parseDec()
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
+         exit(0);
     return nullptr;
 }
 
@@ -313,17 +319,10 @@ Expr *Parser::parseFactor_power()
 {
     Expr *Left = parseFactor_terminals();
     BinaryOp_Calculators::Operator Op;
-    while (Tok.isOneOf(Token::star, Token::slash, Token::percent))
+    while (Tok.is(Token::power))
     {
 
-        if (Tok.is(Token::star))
-            Op = BinaryOp_Calculators::Mul;
-        else if (Tok.is(Token::slash))
-            Op = BinaryOp_Calculators::Div;
-        else if (Tok.is(Token::percent))
-            Op = BinaryOp_Calculators::Percent;
-        else
-            error();
+        Op = BinaryOp_Calculators::Power;
         advance();
         Expr *Right = parseFactor_terminals();
         Left = new BinaryOp_Calculators(Op, Left, Right);
@@ -481,6 +480,7 @@ Expr *Parser::parseCondition()
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
+        exit(0);
     return nullptr;
 }
 
@@ -527,5 +527,6 @@ Expr *Parser::parseLoop()
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
+        exit(0);
     return nullptr;
 }
