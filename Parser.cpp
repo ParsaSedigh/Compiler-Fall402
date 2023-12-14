@@ -74,6 +74,7 @@ AST *Parser::parseGoal()
 _error:
     while (Tok.getKind() != Token::eoi)
         advance();
+        exit(0);
     return nullptr;
 }
 
@@ -125,6 +126,7 @@ Expr *Parser::parseDec()
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
+         exit(0);
     return nullptr;
 }
 
@@ -485,6 +487,7 @@ Expr *Parser::parseCondition()
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
+        exit(0);
     return nullptr;
 }
 
@@ -531,5 +534,6 @@ Expr *Parser::parseLoop()
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
+        exit(0);
     return nullptr;
 }
