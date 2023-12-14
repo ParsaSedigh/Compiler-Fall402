@@ -105,6 +105,13 @@ Expr *Parser::parseDec()
     {
         advance();
         E = parseExpr();
+        advance();
+        while (Tok.is(Token::comma))
+        {
+            E += parseExpr();
+            advance();
+        }
+        
     }
 
     if (expect(Token::semicolon))
