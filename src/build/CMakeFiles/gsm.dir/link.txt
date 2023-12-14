@@ -1,1 +1,0 @@
-/usr/bin/c++ -g3 -Wall -O0 -rdynamic CMakeFiles/gsm.dir/GSM.cpp.o CMakeFiles/gsm.dir/CodeGen.cpp.o CMakeFiles/gsm.dir/Lexer.cpp.o CMakeFiles/gsm.dir/Parser.cpp.o CMakeFiles/gsm.dir/Sema.cpp.o -o gsm 
