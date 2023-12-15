@@ -3,7 +3,8 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
-
+#include "llvm/Support/Casting.h"
+using namespace llvm;
 // Forward declarations of classes used in the AST
 class AST;
 class Expr;
@@ -190,6 +191,8 @@ public:
 
   Expr *getRight() { return Right; }
 
+  // llvm::StringRef getLeftvalue() { return Left->getText(); } // mahsein added
+
   Operator getOperator() { return Op; }
 
   virtual void accept(ASTVisitor &V) override
@@ -227,15 +230,13 @@ public:
   }
 };
 
-class Condition : public Expr
-{
-
-using ExprVector = llvm::SmallVector<Expr *>;  
+class Condition : public Expr {
+  using ExprVector = llvm::SmallVector<Expr *>;
 
 private:
-  ExprVector exprs; 
+  ExprVector exprs;
 
-public : 
+public:
   Condition(llvm::SmallVector<Expr *> exprs) : exprs(exprs) {}
 
   llvm::SmallVector<Expr *> getExprs() { return exprs; }
@@ -244,8 +245,58 @@ public :
 
   ExprVector::const_iterator end() { return exprs.end(); }
 
-  virtual void accept(ASTVisitor &V) override
-  {
+  // enum Sign {
+  //   None,
+  //   Equals,
+  //   NotEquals,
+  //   GreaterThanOrEqual,
+  //   LessThanOrEqual,
+  //   GreaterThan,
+  //   LessThan
+  // };
+
+  // Sign getSign() {
+  //   // For this example, assuming a simple condition represented by BinaryOp_Relational
+  //   // with one relational operator
+  //   if (exprs.size() == 1) {
+  //     BinaryOp_Relational *relation = BinaryOp_Relational(exprs[1],exprs[0],exprs[2])*;
+  //     switch (relation->getOperator()) {
+  //       case BinaryOp_Relational::Equality:
+  //         return Equals;
+  //       case BinaryOp_Relational::Not_equal:
+  //         return NotEquals;
+  //       case BinaryOp_Relational::Greater_than_or_equal:
+  //         return GreaterThanOrEqual;
+  //       case BinaryOp_Relational::Less_than_or_equal:
+  //         return LessThanOrEqual;
+  //       case BinaryOp_Relational::Greater_than:
+  //         return GreaterThan;
+  //       case BinaryOp_Relational::Less_than:
+  //         return LessThan;
+  //       default:
+  //         return None;
+  //     }
+  //   }
+  //   return None;
+  // }
+
+  // Expr *getLeft() {
+  //   if (exprs.size() == 1) {
+  //     BinaryOp_Relational *relation = (BinaryOp_Relational)(exprs[0]);
+  //     return relation->getLeft();
+  //   }
+  //   return nullptr;
+  // }
+
+  // Expr *getRight() {
+  //   if (exprs.size() == 1) {
+  //     BinaryOp_Relational *relation = (BinaryOp_Relational)(exprs[0]);
+  //     return relation->getRight();
+  //   }
+  //   return nullptr;
+  // }
+
+  virtual void accept(ASTVisitor &V) override {
     V.visit(*this);
   }
 };

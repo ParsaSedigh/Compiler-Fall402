@@ -106,7 +106,22 @@ public:
 
   virtual void visit(Loop &Node) {};
   
-  virtual void visit(Condition &Node) {};
+  // virtual void visit(Condition &Node) override {
+  //   if (Node.getLeft())
+  //     Node.getLeft()->accept(*this);
+  //   else HasError = true;
+  //   auto right = Node.getRight();
+  //   if (right)
+  //     right->accept(*this);
+  //   else HasError = true;
+  //   if (Node.getLeft()->getKind() != Factor::Ident && Node.getLeft()->getKind() != Factor::Number) {
+  //     llvm::errs() << "Left side of condition must be an identifier or a number.\n";
+  //   }
+
+  //   if (Node.getRight()->getKind() != Factor::Ident && Node.getRight()->getKind() != Factor::Number) {
+  //     llvm::errs() << "Right side of condition must be an identifier or a number.\n";
+  //   }
+  // };
 
 
 };

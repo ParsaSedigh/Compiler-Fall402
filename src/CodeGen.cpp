@@ -242,9 +242,13 @@ namespace
 
     // virtual void visit(Condition &Node) override
     // {
-    //   Node.getLeft()->accept(*this);
+    //   llvm::SmallVector<Expr *> exprs = Node.getExprs();
+    //   auto Left1 = exprs[0];
+    //   auto condition1 = exprs[1];
+    //   auto Right1 = exprs[2];
+    //   Left1->accept(*this);
     //   Value* Left = V;
-    //   Node.getRight()->accept(*this);
+    //   Right1->accept(*this);
     //   Value* Right = V;
     //   switch (Node.getSign())
     //   {
@@ -266,7 +270,7 @@ namespace
     //   case Condition::Operator::NotEqual:
     //     V = Builder.CreateICmpNE(Left, Right);
     //   }
-    // }
+    // };
     // virtual void visit(Loop &Node) override
     // {
 
