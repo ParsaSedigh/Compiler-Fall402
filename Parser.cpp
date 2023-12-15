@@ -70,7 +70,8 @@ AST *Parser::parseGoal()
         }
         advance(); // TODO: watch this part
     }
-    return new GSM(exprs);
+    if( exprs!=nullptr){
+    return new GSM(exprs);}
 _error:
     while (Tok.getKind() != Token::eoi)
         advance();
@@ -121,8 +122,15 @@ Expr *Parser::parseDec()
 
     if (expect(Token::semicolon))
         goto _error;
-
+    if (E)
+    {
     return new Declaration(Vars, E);
+    }
+    else{
+        llvm::errs()<< "Kire Khar";
+        return nullptr;
+    }
+    
 _error: // TODO: Check this later in case of error :)
     while (Tok.getKind() != Token::eoi)
         advance();
