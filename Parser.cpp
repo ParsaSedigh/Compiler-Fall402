@@ -127,7 +127,6 @@ Expr *Parser::parseDec()
     return new Declaration(Vars, E);
     }
     else{
-        llvm::errs()<< "Kire Khar";
         return nullptr;
     }
     
@@ -143,12 +142,18 @@ Expr *Parser::parseAssign()
     Expr *E;
     Factor *F;
     F = (Factor *)(parseFactor());
+    
 
-    if (!Tok.is(Token::equal))
+    if (!Tok.is(Token::equal) && !Tok.is(Token::plus_equal) && !Tok.is(Token::minus_equal) && !Tok.is(Token::slash_equal) && !Tok.is(Token::star_equal))
     {
         error();
         return nullptr;
     }
+    if (Tok.isOneOf(Token::plus_equal , Token::minus_equal,Token::slash_equal,Token::star_equal))
+    {
+        advance();
+    }
+    
 
     advance();
     E = parseExpr();
