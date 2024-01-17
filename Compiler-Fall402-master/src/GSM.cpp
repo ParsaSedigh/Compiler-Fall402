@@ -1,4 +1,4 @@
-﻿#include "CodeGen.h"
+#include "CodeGen.h"
 #include "Parser.h"
 #include "Sema.h"
 #include "optimize.cpp"
@@ -36,8 +36,22 @@ int main(int argc, const char **argv)
         llvm::errs() << "Syntax errors occurred\n";
         return 1;
     }
-    Optimization Op;
-    Op.Optimize(Tree);
+
+    /* After generating the AST tree, faze 2 begins. In this project we
+       add an stage called Optimization to delete the dead code and then 
+       passing it to semantic stage.*/
+
+
+    /*Create an instance of Optimization to optimize the AST tree.*/
+    Optimization Optimizer;
+    
+    /*Passing the AST tree to optimize function of optimization class.*/
+    Optimizer.Optimize(Tree);
+
+    /* Now we have the optimized code that generated from Optimization class.
+       After that we should check the semantic of the code and then generate 
+       the assembely code using Codegen, just like faze 1.*/
+    
     // Perform semantic analysis on the AST.
     Sema Semantic;
     if (Semantic.semantic(Tree))
