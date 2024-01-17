@@ -7,4 +7,4 @@ Collaborators:
 ## Faze 1:
 * The first faze of project is located at Develope branch.
 ## Faze 2:
-* The second faze of project is loacted at faze_2 branch.
+* The second faze of project is loacted at faze_dovom branch.
